@@ -49,10 +49,13 @@ private:
 	UStaticMeshComponent* SkateboardMesh;
 
 	UPROPERTY(EditAnywhere, Category = "Movement")
-	float Speed = 200.f;
+	float ImpulseForce = 1000.f; //Impulse force
 
 	UPROPERTY(EditAnywhere, Category = "Movement")
-	float TurnRate = 200.f;
+	float ReduceVelocityFactor = 0.9f; //Reduces velocity by 10%
+
+	UPROPERTY(EditAnywhere, Category = "Movement")
+	float TurnRate = 45.f;
 
 	UPROPERTY(VisibleAnywhere, Category = "Camera")
 	class USpringArmComponent* SpringArm;

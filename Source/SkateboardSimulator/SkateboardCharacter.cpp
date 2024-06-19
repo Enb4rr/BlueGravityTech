@@ -9,6 +9,7 @@
 #include "InputActionValue.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
 ASkateboardCharacter::ASkateboardCharacter()
@@ -76,14 +77,26 @@ void ASkateboardCharacter::Impulse(const FInputActionValue& Value)
     if (Controller != nullptr)
     {
         const FVector2D MoveValue = Value.Get<FVector2D>();
-        const FRotator MovementRotation(0, Controller->GetControlRotation().Yaw, 0);
  
         //Forward/Backward direction
         if (MoveValue.Y != 0.f)
         {
-            const FVector Direction = MovementRotation.RotateVector(FVector::ForwardVector);
-            AddMovementInput(Direction, MoveValue.Y);
+            if(MoveValue.Y > 0)
+            {
+                const FVector ImpulseDirection = GetActorForwardVector();
+                FVector Impulse = ImpulseDirection * ImpulseForce;
+
+                GetCharacterMovement() -> Launch(FVector(Impulse.X, Impulse.Y, 0.0f));
+            }
+            else
+            {
+                const FVector CurrentVelocity = GetCharacterMovement() -> Velocity;
+                FVector ReducedVelocity = CurrentVelocity * ReduceVelocityFactor;
+                GetCharacterMovement() -> Velocity = ReducedVelocity;
+            }
         }
+
+
     }
 }
 
@@ -92,15 +105,11 @@ void ASkateboardCharacter::Balance(const FInputActionValue& Value)
     if(Controller != nullptr)
     {
         const FVector2D MoveValue = Value.Get<FVector2D>();
-        const FRotator MovementRotation(0, Controller->GetControlRotation().Yaw, 0);
 
         // Right/Left direction
-        if (MoveValue.X != 0.f)
+        if (MoveValue.X != 0.f && GetCharacterMovement() -> Velocity != FVector::ZeroVector)
         {
-            // Get right vector
-            const FVector Direction = MovementRotation.RotateVector(FVector::RightVector);
- 
-            AddMovementInput(Direction, MoveValue.X);
+            AddControllerYawInput(MoveValue.X * TurnRate * GetWorld() -> GetDeltaSeconds());
         }
     }
 }
@@ -109,12 +118,12 @@ void ASkateboardCharacter::Turn(const FInputActionValue& Value)
 {
     if(Controller != nullptr)
     {
-        const FVector2D LookValue = Value.Get<FVector2D>();
+         const FVector2D LookValue = Value.Get<FVector2D>();
 
-        if (LookValue.X != 0.f) CameraRotation.Yaw += LookValue.X * BaseTurnRate * GetWorld() -> GetDeltaSeconds();
-        if (LookValue.Y != 0.f) CameraRotation.Pitch += LookValue.Y * BaseLookUpRate * GetWorld()->GetDeltaSeconds();
+         if (LookValue.X != 0.f) CameraRotation.Yaw += LookValue.X * BaseTurnRate * GetWorld() -> GetDeltaSeconds();
+         if (LookValue.Y != 0.f) CameraRotation.Pitch += LookValue.Y * BaseLookUpRate * GetWorld()->GetDeltaSeconds();
 
-        SpringArm -> SetWorldRotation(CameraRotation);
+         SpringArm -> SetWorldRotation(CameraRotation);
     }
 }
 

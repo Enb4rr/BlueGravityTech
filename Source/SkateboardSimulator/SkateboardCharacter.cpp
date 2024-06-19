@@ -7,6 +7,8 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInput/Public/EnhancedInputComponent.h"
 #include "InputActionValue.h"
+#include "GameFramework/SpringArmComponent.h"
+#include "Camera/CameraComponent.h"
 
 // Sets default values
 ASkateboardCharacter::ASkateboardCharacter()
@@ -14,13 +16,29 @@ ASkateboardCharacter::ASkateboardCharacter()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+    SkateboardMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Base Mesh"));
+    SkateboardMesh -> SetupAttachment(RootComponent);
+
+    // Set base turn rates for the camera
+    BaseTurnRate = 45.f;
+    BaseLookUpRate = 45.f;
+
+    SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("Spring Arm"));
+    SpringArm -> SetupAttachment(RootComponent);
+
+    Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
+    Camera -> SetupAttachment(SpringArm);
+
+    if (SpringArm) SpringArm -> bUsePawnControlRotation = false;
+    if (Camera) Camera -> bUsePawnControlRotation = false;
+
+    CameraRotation = FRotator::ZeroRotator;
 }
 
 // Called when the game starts or when spawned
 void ASkateboardCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 // Called every frame
@@ -49,7 +67,7 @@ void ASkateboardCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 
 	PEI -> BindAction(ImpulseInputAction, ETriggerEvent::Triggered, this, &ASkateboardCharacter::Impulse);
     PEI -> BindAction(BalanceInputAction, ETriggerEvent::Triggered, this, &ASkateboardCharacter::Balance);
-	PEI -> BindAction(LookInputAction, ETriggerEvent::Triggered, this, &ASkateboardCharacter::Look);
+    PEI -> BindAction(TurnInputAction, ETriggerEvent::Triggered, this, &ASkateboardCharacter::Turn);
 	PEI -> BindAction(JumpInputAction, ETriggerEvent::Triggered, this, &ASkateboardCharacter::JumpUp);
 }
 
@@ -60,15 +78,22 @@ void ASkateboardCharacter::Impulse(const FInputActionValue& Value)
         const FVector2D MoveValue = Value.Get<FVector2D>();
         const FRotator MovementRotation(0, Controller->GetControlRotation().Yaw, 0);
  
-        // Forward/Backward direction
+        //Forward/Backward direction
         if (MoveValue.Y != 0.f)
         {
-            // Get forward vector
             const FVector Direction = MovementRotation.RotateVector(FVector::ForwardVector);
- 
             AddMovementInput(Direction, MoveValue.Y);
         }
- 
+    }
+}
+
+void ASkateboardCharacter::Balance(const FInputActionValue& Value)
+{
+    if(Controller != nullptr)
+    {
+        const FVector2D MoveValue = Value.Get<FVector2D>();
+        const FRotator MovementRotation(0, Controller->GetControlRotation().Yaw, 0);
+
         // Right/Left direction
         if (MoveValue.X != 0.f)
         {
@@ -80,26 +105,16 @@ void ASkateboardCharacter::Impulse(const FInputActionValue& Value)
     }
 }
 
-void ASkateboardCharacter::Balance(const FInputActionValue& Value)
+void ASkateboardCharacter::Turn(const FInputActionValue& Value)
 {
-
-}
-
-void ASkateboardCharacter::Look(const FInputActionValue& Value)
-{
-    if (Controller != nullptr)
+    if(Controller != nullptr)
     {
         const FVector2D LookValue = Value.Get<FVector2D>();
- 
-        if (LookValue.X != 0.f)
-        {
-            AddControllerYawInput(LookValue.X * -1.f);
-        }
- 
-        if (LookValue.Y != 0.f)
-        {
-            AddControllerPitchInput(LookValue.Y);
-        }
+
+        if (LookValue.X != 0.f) CameraRotation.Yaw += LookValue.X * BaseTurnRate * GetWorld() -> GetDeltaSeconds();
+        if (LookValue.Y != 0.f) CameraRotation.Pitch += LookValue.Y * BaseLookUpRate * GetWorld()->GetDeltaSeconds();
+
+        SpringArm -> SetWorldRotation(CameraRotation);
     }
 }
 

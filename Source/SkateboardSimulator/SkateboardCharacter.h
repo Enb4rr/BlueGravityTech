@@ -7,6 +7,8 @@
 #include "InputActionValue.h"
 #include "SkateboardCharacter.generated.h"
 
+class ABaseSkateboard;
+
 UCLASS()
 class SKATEBOARDSIMULATOR_API ASkateboardCharacter : public ACharacter
 {
@@ -20,6 +22,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enhanced Input")
     class UInputMappingContext* InputMapping;
+
+	// Store the camera rotation
+    FRotator CameraRotation;
 
 public:	
 	virtual void Tick(float DeltaTime) override;
@@ -35,13 +40,34 @@ private:
 	class UInputAction* BalanceInputAction;
 
 	UPROPERTY(EditAnywhere, Category = "Enhanced Input")
-	class UInputAction* LookInputAction;
+	class UInputAction* TurnInputAction;
 
 	UPROPERTY(EditAnywhere, Category = "Enhanced Input")
 	class UInputAction* JumpInputAction;
 
+	UPROPERTY(VisibleAnywhere, Category = "Components")
+	UStaticMeshComponent* SkateboardMesh;
+
+	UPROPERTY(EditAnywhere, Category = "Movement")
+	float Speed = 200.f;
+
+	UPROPERTY(EditAnywhere, Category = "Movement")
+	float TurnRate = 200.f;
+
+	UPROPERTY(VisibleAnywhere, Category = "Camera")
+	class USpringArmComponent* SpringArm;
+
+	UPROPERTY(VisibleAnywhere, Category = "Camera")
+	class UCameraComponent* Camera;
+
+    UPROPERTY(VisibleAnywhere, Category = "Camera")
+    float BaseTurnRate;
+
+    UPROPERTY(VisibleAnywhere, Category = "Camera")
+    float BaseLookUpRate;
+
 	void Impulse(const FInputActionValue& Value);
 	void Balance(const FInputActionValue& Value);
-	void Look(const FInputActionValue& Value);
+	void Turn(const FInputActionValue& Value);
 	void JumpUp(const FInputActionValue& Value);
 };

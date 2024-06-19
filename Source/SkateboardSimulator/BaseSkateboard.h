@@ -15,8 +15,7 @@ public:
 	ABaseSkateboard();
 
 	void Move();
-	void Jump();
-	void AttachToPlayer();
+	void Drift();
 
 protected:
 	virtual void BeginPlay() override;
@@ -26,27 +25,6 @@ public:
 
 private:
 
-	UPROPERTY(VisibleAnywhere, Category = "Components")
-	USceneComponent* AttachPoint;
-
-	UPROPERTY(VisibleAnywhere, Category = "Components")
+	UPROPERTY(EditAnywhere)
 	UStaticMeshComponent* BaseMesh;
-
-	UPROPERTY(VisibleAnywhere, Category = "Components")
-	UStaticMeshComponent* FrontMetallicMesh;
-
-	UPROPERTY(VisibleAnywhere, Category = "Components")
-	UStaticMeshComponent* BackMetallicMesh;
-
-	UPROPERTY(VisibleAnywhere, Category = "Components")
-	UStaticMeshComponent* FrontLeftWheelMesh;
-
-	UPROPERTY(VisibleAnywhere, Category = "Components")
-	UStaticMeshComponent* FrontRightWheelMesh;
-
-	UPROPERTY(VisibleAnywhere, Category = "Components")
-	UStaticMeshComponent* BackLeftWheelMesh;
-
-	UPROPERTY(VisibleAnywhere, Category = "Components")
-	UStaticMeshComponent* BackRightWheelMesh;
 };

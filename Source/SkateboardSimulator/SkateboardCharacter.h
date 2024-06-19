@@ -31,6 +31,9 @@ public:
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	float GetPoints() const;
+	void AddPoints(int PointsToAdd);
+
 private:
 
 	UPROPERTY(EditAnywhere, Category = "Enhanced Input")
@@ -68,6 +71,9 @@ private:
 
     UPROPERTY(VisibleAnywhere, Category = "Camera")
     float BaseLookUpRate;
+
+	UPROPERTY(VisibleAnywhere, Category = "Points")
+    float Points;
 
 	void Impulse(const FInputActionValue& Value);
 	void Balance(const FInputActionValue& Value);

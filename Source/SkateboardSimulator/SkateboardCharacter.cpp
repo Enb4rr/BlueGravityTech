@@ -132,3 +132,13 @@ void ASkateboardCharacter::JumpUp(const FInputActionValue& Value)
 	if(Controller != nullptr) Jump();
 }
 
+float ASkateboardCharacter::GetPoints() const
+{
+    return Points;
+}
+
+void ASkateboardCharacter::AddPoints(int PointsToAdd)
+{
+    Points += PointsToAdd;
+}
+

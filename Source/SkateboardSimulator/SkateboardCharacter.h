@@ -31,7 +31,9 @@ public:
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	UFUNCTION(BlueprintPure)
 	float GetPoints() const;
+
 	void AddPoints(int PointsToAdd);
 
 private:

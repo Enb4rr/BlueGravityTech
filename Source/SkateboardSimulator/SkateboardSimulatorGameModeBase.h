@@ -14,4 +14,8 @@ class SKATEBOARDSIMULATOR_API ASkateboardSimulatorGameModeBase : public AGameMod
 {
 	GENERATED_BODY()
 	
+public:
+
+	virtual void Scored();
+
 };

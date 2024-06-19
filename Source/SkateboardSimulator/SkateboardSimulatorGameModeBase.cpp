@@ -3,3 +3,7 @@
 
 #include "SkateboardSimulatorGameModeBase.h"
 
+void ASkateboardSimulatorGameModeBase::Scored()
+{
+    
+}

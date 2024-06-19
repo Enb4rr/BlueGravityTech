@@ -1,5 +1,21 @@
 [
 	{
+		"file": "C:\\Users\\julia\\OneDrive\\Escritorio\\Projects\\SkateboardSimulator\\Source\\SkateboardSimulator\\BaseSkateboard.cpp",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.37.32822\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\julia\\OneDrive\\Escritorio\\Projects\\SkateboardSimulator\\.vscode\\compileCommands_Default\\SkateboardSimulator.261.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.2\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\julia\\OneDrive\\Escritorio\\Projects\\SkateboardSimulator\\Source\\SkateboardSimulator\\BaseSkateboard.h",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.37.32822\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\julia\\OneDrive\\Escritorio\\Projects\\SkateboardSimulator\\.vscode\\compileCommands_Default\\SkateboardSimulator.261.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.2\\Engine\\Source"
+	},
+	{
 		"file": "C:\\Users\\julia\\OneDrive\\Escritorio\\Projects\\SkateboardSimulator\\Source\\SkateboardSimulator\\SimpleSkateboardingGameMode.cpp",
 		"arguments": [
 			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.37.32822\\bin\\Hostx64\\x64\\cl.exe",

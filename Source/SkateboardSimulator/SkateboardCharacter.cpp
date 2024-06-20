@@ -20,7 +20,7 @@ ASkateboardCharacter::ASkateboardCharacter()
 	PrimaryActorTick.bCanEverTick = true;
 
     SkateboardMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Base Mesh"));
-    SkateboardMesh -> SetupAttachment(RootComponent);
+    SkateboardMesh -> SetupAttachment(GetMesh());
 
     SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("Spring Arm"));
     SpringArm -> SetupAttachment(RootComponent);
@@ -30,9 +30,6 @@ ASkateboardCharacter::ASkateboardCharacter()
 
     if (SpringArm) SpringArm -> bUsePawnControlRotation = false;
     if (Camera) Camera -> bUsePawnControlRotation = false;
-
-    bCanApplyImpulse = true;
-    ImpulseCooldownTime = 1.0f;
 }
 
 // Called when the game starts or when spawned
@@ -65,14 +62,14 @@ void ASkateboardCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 	// Get the EnhancedInputComponent
 	UEnhancedInputComponent* PEI = Cast<UEnhancedInputComponent>(PlayerInputComponent);
 
-	PEI -> BindAction(ImpulseInputAction, ETriggerEvent::Triggered, this, &ASkateboardCharacter::Impulse);
+	PEI -> BindAction(ImpulseInputAction, ETriggerEvent::Triggered, this, &ASkateboardCharacter::ImpulseAnim);
     PEI -> BindAction(BalanceInputAction, ETriggerEvent::Triggered, this, &ASkateboardCharacter::Balance);
 	PEI -> BindAction(JumpInputAction, ETriggerEvent::Triggered, this, &ASkateboardCharacter::JumpUp);
 }
 
 void ASkateboardCharacter::Impulse(const FInputActionValue& Value)
 {
-    if (Controller != nullptr && bCanApplyImpulse)
+    if (Controller != nullptr)
     {
         const FVector2D MoveValue = Value.Get<FVector2D>();
  
@@ -93,13 +90,7 @@ void ASkateboardCharacter::Impulse(const FInputActionValue& Value)
                 GetCharacterMovement() -> Velocity = ReducedVelocity;
             }
 
-            if (ImpulseAnimation)
-            {
-                PlayAnimMontage(ImpulseAnimation);
-            }
-
-            bCanApplyImpulse = false;
-            GetWorldTimerManager().SetTimer(ImpulseCooldownTimerHandle, this, &ASkateboardCharacter::ResetImpulseCooldown, ImpulseCooldownTime);
+            bImpulsePressed = false;
         }
 
 
@@ -122,7 +113,10 @@ void ASkateboardCharacter::Balance(const FInputActionValue& Value)
 
 void ASkateboardCharacter::JumpUp(const FInputActionValue& Value)
 {
-	if(Controller != nullptr) Jump();
+	if(Controller != nullptr)
+    {
+        Jump();
+    }
 }
 
 float ASkateboardCharacter::GetPoints() const
@@ -130,13 +124,24 @@ float ASkateboardCharacter::GetPoints() const
     return Points;
 }
 
+bool ASkateboardCharacter::ImpulsePressed() const
+{
+    return bImpulsePressed;
+}
+
 void ASkateboardCharacter::AddPoints(int PointsToAdd)
 {
     Points += PointsToAdd;
 }
 
-void ASkateboardCharacter::ResetImpulseCooldown()
+void ASkateboardCharacter::ImpulseAnim(const FInputActionValue& Value)
 {
-    bCanApplyImpulse = true;
+    bImpulsePressed = true;
+    GetWorldTimerManager().SetTimer(TimerHandle, [this, Value]()
+    {
+        this -> Impulse(Value);
+    }, 1.2f, false);
 }
+
+
 

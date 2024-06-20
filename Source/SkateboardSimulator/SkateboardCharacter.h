@@ -23,11 +23,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enhanced Input")
     class UInputMappingContext* InputMapping;
 
-    bool bCanApplyImpulse;
-    float ImpulseCooldownTime;
-    FTimerHandle ImpulseCooldownTimerHandle;
-
-	void ResetImpulseCooldown();
+    FTimerHandle TimerHandle;
 
 public:	
 	virtual void Tick(float DeltaTime) override;
@@ -36,6 +32,9 @@ public:
 
 	UFUNCTION(BlueprintPure)
 	float GetPoints() const;
+
+	UFUNCTION(BlueprintPure)
+	bool ImpulsePressed() const;
 
 	void AddPoints(int PointsToAdd);
 
@@ -71,11 +70,12 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Points")
     float Points;
 
-	// Animation to play during impulse
-    UPROPERTY(EditAnywhere, Category = "Animation")
-    UAnimMontage* ImpulseAnimation;
+	bool bImpulsePressed;
 
 	void Impulse(const FInputActionValue& Value);
 	void Balance(const FInputActionValue& Value);
 	void JumpUp(const FInputActionValue& Value);
+
+	void ImpulseAnim(const FInputActionValue& Value);
+	void JumpAnim(const FInputActionValue& Value);
 };

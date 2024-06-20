@@ -22,10 +22,6 @@ ASkateboardCharacter::ASkateboardCharacter()
     SkateboardMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Base Mesh"));
     SkateboardMesh -> SetupAttachment(RootComponent);
 
-    // Set base turn rates for the camera
-    BaseTurnRate = 45.f;
-    BaseLookUpRate = 45.f;
-
     SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("Spring Arm"));
     SpringArm -> SetupAttachment(RootComponent);
 
@@ -34,8 +30,6 @@ ASkateboardCharacter::ASkateboardCharacter()
 
     if (SpringArm) SpringArm -> bUsePawnControlRotation = false;
     if (Camera) Camera -> bUsePawnControlRotation = false;
-
-    CameraRotation = FRotator::ZeroRotator;
 
     bCanApplyImpulse = true;
     ImpulseCooldownTime = 2.0f;
@@ -73,7 +67,6 @@ void ASkateboardCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 
 	PEI -> BindAction(ImpulseInputAction, ETriggerEvent::Triggered, this, &ASkateboardCharacter::Impulse);
     PEI -> BindAction(BalanceInputAction, ETriggerEvent::Triggered, this, &ASkateboardCharacter::Balance);
-    PEI -> BindAction(TurnInputAction, ETriggerEvent::Triggered, this, &ASkateboardCharacter::Turn);
 	PEI -> BindAction(JumpInputAction, ETriggerEvent::Triggered, this, &ASkateboardCharacter::JumpUp);
 }
 
@@ -124,19 +117,6 @@ void ASkateboardCharacter::Balance(const FInputActionValue& Value)
         {
             AddControllerYawInput(MoveValue.X * TurnRate * GetWorld() -> GetDeltaSeconds());
         }
-    }
-}
-
-void ASkateboardCharacter::Turn(const FInputActionValue& Value)
-{
-    if(Controller != nullptr)
-    {
-         const FVector2D LookValue = Value.Get<FVector2D>();
-
-         if (LookValue.X != 0.f) CameraRotation.Yaw += LookValue.X * BaseTurnRate * GetWorld() -> GetDeltaSeconds();
-         if (LookValue.Y != 0.f) CameraRotation.Pitch += LookValue.Y * BaseLookUpRate * GetWorld()->GetDeltaSeconds();
-
-         SpringArm -> SetWorldRotation(CameraRotation);
     }
 }
 

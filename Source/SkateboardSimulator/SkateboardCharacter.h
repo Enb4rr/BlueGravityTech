@@ -23,10 +23,6 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enhanced Input")
     class UInputMappingContext* InputMapping;
 
-	// Store the camera rotation
-    FRotator CameraRotation;
-
-	// Impulse cooldown
     bool bCanApplyImpulse;
     float ImpulseCooldownTime;
     FTimerHandle ImpulseCooldownTimerHandle;
@@ -52,9 +48,6 @@ private:
 	class UInputAction* BalanceInputAction;
 
 	UPROPERTY(EditAnywhere, Category = "Enhanced Input")
-	class UInputAction* TurnInputAction;
-
-	UPROPERTY(EditAnywhere, Category = "Enhanced Input")
 	class UInputAction* JumpInputAction;
 
 	UPROPERTY(VisibleAnywhere, Category = "Components")
@@ -75,12 +68,6 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Camera")
 	class UCameraComponent* Camera;
 
-    UPROPERTY(VisibleAnywhere, Category = "Camera")
-    float BaseTurnRate;
-
-    UPROPERTY(VisibleAnywhere, Category = "Camera")
-    float BaseLookUpRate;
-
 	UPROPERTY(VisibleAnywhere, Category = "Points")
     float Points;
 
@@ -90,6 +77,5 @@ private:
 
 	void Impulse(const FInputActionValue& Value);
 	void Balance(const FInputActionValue& Value);
-	void Turn(const FInputActionValue& Value);
 	void JumpUp(const FInputActionValue& Value);
 };

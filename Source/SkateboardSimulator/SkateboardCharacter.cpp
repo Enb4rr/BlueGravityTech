@@ -32,7 +32,7 @@ ASkateboardCharacter::ASkateboardCharacter()
     if (Camera) Camera -> bUsePawnControlRotation = false;
 
     bCanApplyImpulse = true;
-    ImpulseCooldownTime = 2.0f;
+    ImpulseCooldownTime = 1.0f;
 }
 
 // Called when the game starts or when spawned

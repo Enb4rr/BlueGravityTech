@@ -26,6 +26,13 @@ protected:
 	// Store the camera rotation
     FRotator CameraRotation;
 
+	// Impulse cooldown
+    bool bCanApplyImpulse;
+    float ImpulseCooldownTime;
+    FTimerHandle ImpulseCooldownTimerHandle;
+
+	void ResetImpulseCooldown();
+
 public:	
 	virtual void Tick(float DeltaTime) override;
 
@@ -76,6 +83,10 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = "Points")
     float Points;
+
+	// Animation to play during impulse
+    UPROPERTY(EditAnywhere, Category = "Animation")
+    UAnimMontage* ImpulseAnimation;
 
 	void Impulse(const FInputActionValue& Value);
 	void Balance(const FInputActionValue& Value);

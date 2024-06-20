@@ -10,6 +10,8 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "TimerManager.h"
+#include "Animation/AnimMontage.h"
 
 // Sets default values
 ASkateboardCharacter::ASkateboardCharacter()
@@ -34,6 +36,9 @@ ASkateboardCharacter::ASkateboardCharacter()
     if (Camera) Camera -> bUsePawnControlRotation = false;
 
     CameraRotation = FRotator::ZeroRotator;
+
+    bCanApplyImpulse = true;
+    ImpulseCooldownTime = 2.0f;
 }
 
 // Called when the game starts or when spawned
@@ -74,7 +79,7 @@ void ASkateboardCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 
 void ASkateboardCharacter::Impulse(const FInputActionValue& Value)
 {
-    if (Controller != nullptr)
+    if (Controller != nullptr && bCanApplyImpulse)
     {
         const FVector2D MoveValue = Value.Get<FVector2D>();
  
@@ -94,6 +99,14 @@ void ASkateboardCharacter::Impulse(const FInputActionValue& Value)
                 FVector ReducedVelocity = CurrentVelocity * ReduceVelocityFactor;
                 GetCharacterMovement() -> Velocity = ReducedVelocity;
             }
+
+            if (ImpulseAnimation)
+            {
+                PlayAnimMontage(ImpulseAnimation);
+            }
+
+            bCanApplyImpulse = false;
+            GetWorldTimerManager().SetTimer(ImpulseCooldownTimerHandle, this, &ASkateboardCharacter::ResetImpulseCooldown, ImpulseCooldownTime);
         }
 
 
@@ -140,5 +153,10 @@ float ASkateboardCharacter::GetPoints() const
 void ASkateboardCharacter::AddPoints(int PointsToAdd)
 {
     Points += PointsToAdd;
+}
+
+void ASkateboardCharacter::ResetImpulseCooldown()
+{
+    bCanApplyImpulse = true;
 }
 
